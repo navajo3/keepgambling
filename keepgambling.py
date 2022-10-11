@@ -8,9 +8,6 @@ deck = [1,2,3,4,5,6,7,8,9,10,10,10,10]               ## send help
 
 currency = 40
 
-cards = random.choice(deck)
-op_cards = random.choice(deck)
-
 game = True
 
 def get_random_card():
@@ -19,7 +16,7 @@ def get_random_card():
     return 
 
 def betting():
-    global loop
+    global loop, bet
     while loop == 1:
         bet = int(input("How much do you want to bet? "))    ## i was going to add an exception in the possibility of inputting a string however this is an inprobable scenario in a real game of blackjack
         if bet > currency:
@@ -34,8 +31,10 @@ def betting():
             return bet, loop
 
 def cardcount():
+    global loop2
     print("Current Card total: ", cards)
     print("")
+    loop2 = 1
     return
 
 def hit_or_stand():
@@ -67,22 +66,36 @@ def opcardrandom():
         return
 
 def logic():
-    global op_cards, cards
+    global op_cards, cards, currency
     if cards > op_cards:
         if cards > 21:
             print("You bust with,", cards, "while your opponent had", op_cards)
+            currency -= bet
+            print("")
+            print("You now have", currency, "$")
             return
         else:
             print("You win with", cards,"while your opponent had", op_cards)
+            currency += bet
+            print("")
+            print("You now have", currency, "$")
             return
     elif cards < op_cards:
         if op_cards > 21:
             print("You win with", cards,"while your opponent busted with", op_cards)
+            currency += bet
+            print("")
+            print("You now have", currency, "$")
+            return
         else:
             print("You lose with", cards,"while your opponent had", op_cards)
+            currency -= bet
+            print("")
+            print("You now have", currency, "$")
             return
     elif cards != op_cards:
-        print("You tie, both players have", cards)      
+        print("You tie, both players have", cards)   
+        print("You still have", currency, "$")   
         return                                                                              ## no idea if 50% of this is working as intended
     # elif cards > 21 and op_cards <= 21:
         print("You bust! You had", cards, " and your opponent had", op_cards)
@@ -96,32 +109,40 @@ def logic():
     else:
         print("Error 0x4, cards are breaking the rules of the game.")
 
-#def replay():   # wip
-#    while loop == 0:
-#        replay = input("Play again? (y/n): ").lower()
-#        if replay == "y":
-#            return
-#        elif replay == "n":
-#            print("you exit with", currency, " remaining.")
-#            time.sleep(3)
-#            break
-#        else:
-#            print("")
+def replay():
+    global loop
+    while loop == 0:
+        replay = input("Play again? (y/n): ").lower()
+        if replay == "y":
+            loop = 1
+            return
+        elif replay == "n":
+            print("you exit with", currency, "$ remaining.")
+            time.sleep(3)
+            break
+        else:
+            print("Invalid input")
 
 while game == True:
+    cards = random.choice(deck)
+    op_cards = random.choice(deck)
     betting()
     get_random_card()
     cardcount()
     opcardrandom()
+    get_random_card()
     hit_or_stand()
     cardcount()
     opcardrandom()
+    get_random_card()
     hit_or_stand()
     cardcount()
     opcardrandom()
+    get_random_card()
     hit_or_stand()
     cardcount()
     logic()
+    replay()
 
 
 
